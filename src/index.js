@@ -1,26 +1,64 @@
 class SmartCalculator {
   constructor(initialValue) {
-    // your implementation
+    this.sequence = [initialValue];
   }
 
   add(number) {
-    // your implementation
+    this._addToSequence(number, '+');
+    return this;
   }
   
   subtract(number) {
-    // your implementation
+    this.add(-number);
+    return this;
   }
 
   multiply(number) {
-    // your implementation
+    this._addToSequence(number, '*');
+    return this;
   }
 
   devide(number) {
-    // your implementation
+    this.multiply(1/number);
+    return this;
   }
 
   pow(number) {
-    // your implementation
+    let lastIndex = this.sequence.length - 1;
+    this.sequence[lastIndex - 1] == '^' && this.sequence[lastIndex] == 1 ? true : this._addToSequence(number, '^');
+    return this;
+  }
+
+  _addToSequence(number, operator) {
+    this.sequence.push(operator);
+    this.sequence.push(number);
+  }
+
+  _sequenceSolve() {
+    let tempSeq = [].concat(this.sequence);
+    while(tempSeq.indexOf('^') != -1) {
+      let index = tempSeq.indexOf('^');
+      let pow = Math.pow(tempSeq[index - 1], tempSeq[index + 1]);
+      tempSeq[index -1] < 0 && pow > 0 ? pow = -pow : false;
+      tempSeq.splice(index - 1, 3, pow);
+    }
+    
+    while(tempSeq.indexOf('*') != -1) {
+      let index = tempSeq.indexOf('*');
+      let mult = tempSeq[index - 1] * tempSeq[index + 1];
+      tempSeq.splice(index - 1, 3, mult);
+    }
+
+    while(tempSeq.indexOf('+') != -1) {
+      let index = tempSeq.indexOf('+');
+      let add = tempSeq[index - 1] + tempSeq[index + 1];
+      tempSeq.splice(index - 1, 3, add);
+    }
+    return tempSeq[0];
+  }
+
+  valueOf() {
+    return this._sequenceSolve();
   }
 }
 
